@@ -50,7 +50,8 @@ $allowedFields = array(
 	'task_severity',
 	'task_priority',
 	'product_version',
-	'closedby_version'
+	'closedby_version',
+	'usertaskfile'
 );
 
 if ($proj->prefs['use_effort_tracking'] && $user->perms('track_effort')) {
@@ -150,6 +151,24 @@ switch (Post::val('name')) {
 			http_response_code(403);
 			die(L('invalidvalue'));
 		}
+		break;
+	case 'usertaskfile':
+		foreach (['error', 'name', 'tmp_name', 'type', 'size'] as $key)
+			$_FILES['upload'][$key] = [$_FILES['upload'][$key]];
+		$success = Backend::upload_files($task['task_id'], '0', 'upload');
+		if ($success) {
+			$proj= new Project($task['project_id']);
+			$attachments = $proj->listTaskAttachments($task['task_id']);
+			$attachment = array_pop($attachments);
+			$result = [
+					"uploaded" => 1,
+					"fileName" => $attachment['orig_name'],
+					"url" => '?getfile=' . $attachment['attachment_id']];
+		}
+		else $result = ["uploaded" => 0, "error" => ["message" => ""]];
+
+		echo json_encode($result);
+		exit();
 		break;
 	default:
 		http_response_code(403);

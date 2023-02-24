@@ -1092,7 +1092,7 @@ class TextFormatter
 		}
 	}
 
-	public static function textarea($name, $rows, $cols, $attrs = null, $content = null)
+	public static function textarea($name, $rows, $cols, $attrs = null, $content = null, $taskid = null)
 	{
 		global $conf;
 
@@ -1118,6 +1118,15 @@ class TextFormatter
 			$return .= "
 <script>
 	CKEDITOR.replace( '".$name."', { entities: true, entities_latin: false, entities_processNumerical: false } );
+  CKEDITOR.config.extraPlugins = 'uploadimage';
+	CKEDITOR.config.uploadUrl = 'js/callbacks/quickedit.php';
+	CKEDITOR.on( 'instanceReady', function( evt ) {
+    evt.editor.on('fileUploadRequest', function( evt ) {
+      evt.data.requestData.name = 'usertaskfile';
+      evt.data.requestData.task_id = " . $taskid . ";
+      evt.data.requestData.csrftoken = '" . $_SESSION['csrftoken'] . "';
+        }) 
+    });
 </script>";
 		}
 

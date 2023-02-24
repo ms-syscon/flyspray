@@ -198,7 +198,7 @@ li.errorinput{background-color:#fc9;}
 		<div class="hide preview" id="preview"></div>
 		<button tabindex="9" type="button" onclick="showPreview('details', '<?php echo Filters::noJsXSS($baseurl); ?>', 'preview')"><?php echo Filters::noXSS(L('preview')); ?></button>
 	<?php endif; ?>
-	<?php echo TextFormatter::textarea('detailed_desc', 15, 70, array('id' => 'details'), Req::val('detailed_desc', $task_details['detailed_desc'])); ?>
+	<?php echo TextFormatter::textarea('detailed_desc', 15, 70, array('id' => 'details'), Req::val('detailed_desc', $task_details['detailed_desc']), Filters::noXSS($task_details['task_id'])); ?>
 	<br />
 	<?php
 	/* Our CKEditor 4.16 setup has undo/redo plugin and the reset button in this template has no functionality if javascript is enabled */

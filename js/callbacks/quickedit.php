@@ -54,6 +54,7 @@ $allowedFields = array(
 	'usertaskfile'
 );
 
+$proj= new Project($task['project_id']);
 if ($proj->prefs['use_effort_tracking'] && $user->perms('track_effort')) {
 	$allowedFields[]='estimated_effort';
 }

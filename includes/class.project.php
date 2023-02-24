@@ -73,6 +73,7 @@ class Project
 		$this->prefs['estimated_effort_format'] = 0;
 		$this->prefs['current_effort_done_format'] = 0;
 		$this->prefs['custom_style'] = $fs->prefs['custom_style'];
+    $this->prefs['use_effort_tracking'] = 0;
 
 		$sortrules = explode(',', $fs->prefs['default_order_by']);
 		foreach ($sortrules as $rule) {

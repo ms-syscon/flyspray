@@ -1116,18 +1116,19 @@ class TextFormatter
 		# Activate CkEditor on textareas
 		if($conf['general']['syntax_plugin']=='html'){
 			$return .= "
-<script>
-	CKEDITOR.replace( '".$name."', { entities: true, entities_latin: false, entities_processNumerical: false } );
-  CKEDITOR.config.extraPlugins = 'uploadimage';
-	CKEDITOR.config.uploadUrl = 'js/callbacks/quickedit.php';
-	CKEDITOR.on( 'instanceReady', function( evt ) {
-    evt.editor.on('fileUploadRequest', function( evt ) {
-      evt.data.requestData.name = 'usertaskfile';
-      evt.data.requestData.task_id = " . $taskid . ";
-      evt.data.requestData.csrftoken = '" . $_SESSION['csrftoken'] . "';
-        }) 
-    });
-</script>";
+        <script>
+	          CKEDITOR.replace( '".$name."', { entities: true, entities_latin: false, entities_processNumerical: false } );";
+      if ($taskid) $return .= "      
+        CKEDITOR.config.extraPlugins = 'uploadimage';
+	      CKEDITOR.config.uploadUrl = 'js/callbacks/quickedit.php';
+	      CKEDITOR.on( 'instanceReady', function( evt ) {
+          evt.editor.on('fileUploadRequest', function( evt ) {
+          evt.data.requestData.name = 'usertaskfile';
+          evt.data.requestData.task_id = " . $taskid . ";
+          evt.data.requestData.csrftoken = '" . $_SESSION['csrftoken'] . "';
+          }) 
+        });";
+      $return .= "</script>";
 		}
 
 		return $return;

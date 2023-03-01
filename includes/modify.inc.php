@@ -424,10 +424,8 @@ switch ($action = Req::val('action'))
     if (isset($conf['html']['allowed_css_properties']))
       $properties = explode(',', $conf['html']['allowed_css_properties']);
 		$purifierconfig = HTMLPurifier_Config::createDefault();
-    $purifierconfig->set('Cache.SerializerPath', 'cache');
+    $purifierconfig->set('Cache.SerializerPath', FS_CACHE_DIR);
 		$purifierconfig->set('CSS.AllowedProperties', $properties);
-    $purifierconfig->set('Cache.SerializerPath', 'cache');
-		$purifierconfig->set('CSS.AllowedProperties', array());
 		if ($fs->prefs['relnofollow']) {
 			$purifierconfig->set('HTML.Nofollow', true);
 		}
@@ -2508,7 +2506,7 @@ switch ($action = Req::val('action'))
       if (isset($conf['html']['allowed_css_properties']))
         $properties = explode(',', $conf['html']['allowed_css_properties']);
 			$purifierconfig = HTMLPurifier_Config::createDefault();
-      $purifierconfig->set('Cache.SerializerPath', 'cache');
+      $purifierconfig->set('Cache.SerializerPath', FS_CACHE_DIR);
 			$purifierconfig->set('CSS.AllowedProperties', $properties);
 			if ($fs->prefs['relnofollow']) {
 				$purifierconfig->set('HTML.Nofollow', true);

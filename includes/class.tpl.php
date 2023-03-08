@@ -1114,21 +1114,35 @@ class TextFormatter
 		$return .= '</textarea>';
 
 		# Activate CkEditor on textareas
-		if($conf['general']['syntax_plugin']=='html'){
-			$return .= "
-        <script>
-	          CKEDITOR.replace( '".$name."', { entities: true, entities_latin: false, entities_processNumerical: false } );";
-      if ($taskid) $return .= "      
-        CKEDITOR.config.extraPlugins = 'uploadimage';
-	      CKEDITOR.config.uploadUrl = 'js/callbacks/quickedit.php';
-	      CKEDITOR.on( 'instanceReady', function( evt ) {
-          evt.editor.on('fileUploadRequest', function( evt ) {
-          evt.data.requestData.name = 'usertaskfile';
-          evt.data.requestData.task_id = " . $taskid . ";
-          evt.data.requestData.csrftoken = '" . $_SESSION['csrftoken'] . "';
-          }) 
+		if($conf['general']['syntax_plugin']=='html') {
+      $js = "CKEDITOR.replace( '".$name."', { entities: true, entities_latin: false, entities_processNumerical: false } );";
+      if (file_exists('js/ckeditor/plugins/uploadimage')) {
+
+        if ($taskid) $js .= "      
+          CKEDITOR.config.extraPlugins = 'uploadimage';
+          CKEDITOR.config.uploadUrl = 'js/callbacks/quickedit.php';
+          CKEDITOR.on( 'instanceReady', function( evt ) {
+            evt.editor.on('fileUploadRequest', function( evt ) {
+              evt.data.requestData.name = 'usertaskfile';
+              evt.data.requestData.task_id = ".$taskid.";
+              evt.data.requestData.csrftoken = '".$_SESSION['csrftoken']."';
+            }) 
+          });";
+      else $js .= "
+        CKEDITOR.config.extraPlugins = 'notification';
+        CKEDITOR.on('instanceReady', function( evt ) {
+          evt.editor.on('paste', function(e) {
+            var html = e.data.dataValue;
+            if (!html) return;
+
+            e.data.dataValue = html.replace( /<img( [^>]*)?>/gi, function( img ) {
+              evt.editor.showNotification( 'Das Einfügen von Bildern ist erst nach dem Speichern möglich', 'info');
+              return '';
+            });
+          });  
         });";
-      $return .= "</script>";
+      }
+      $return .= "<script>" . $js . "</script>";
 		}
 
 		return $return;

@@ -842,10 +842,11 @@ function quick_edit(elem, id)
 			<div class="progress_bar_container" style="display: block; width: auto; margin-bottom: 1em">
 				<?php
 				$subStatuses = []; $listStatuses = $proj->listTaskStatuses();
+				$listStatuses[] = ['status_name' => eL('closed')];
 				foreach ($subtasks as $subtaskOrgin) {
 					$subtask = $fs->getTaskDetails($subtaskOrgin['task_id']);
-					if (!isset($subStatuses[$subtask['status_name']])) $subStatuses[$subtask['status_name']] = 0;
-					$subStatuses[$subtask['status_name']]++;
+					$status = (!$subtask['is_closed']) ? $subtask['status_name'] : eL('closed');
+					isSet($subStatuses[$status]) ? $subStatuses[$status]++ : $subStatuses[$status] = 1;
 				}
 				?>
 				<?php $offset = 0; $cR = 128; $cB = 256; $cG = 128; $colorStep = 128 / count($listStatuses); ?>
@@ -869,16 +870,8 @@ function quick_edit(elem, id)
 		</th>
 		<th><?= eL('project') ?></th>
 		<th><?= eL('summary') ?></th>
-		<th>
-			<a href="<?php echo Filters::noXSS(createURL('details', $task_details['task_id'], null, array('subsort' => (Req::val('suborder') == 'task_priority' && Req::val('subsort') == 'desc') ? 'asc' : 'desc', 'suborder' => 'task_priority') + $_GET) . '#subtask_table'); ?>">
-				<?= eL('priority') ?>
-			</a>
-		</th>
-		<th>
-			<a href="<?php echo Filters::noXSS(createURL('details', $task_details['task_id'], null, array('subsort' => (Req::val('suborder') == 'task_severity' && Req::val('subsort') == 'desc') ? 'asc' : 'desc', 'suborder' => 'task_severity') + $_GET) . '#subtask_table'); ?>">
-				<?= eL('severity') ?>
-			</a>
-		</th>
+		<th><?= eL('priority') ?></th>
+                <th><?= eL('severity') ?></th>
 		<th><?= eL('assignedto') ?></th>
 		<th><?= eL('progress') ?></th>
 		<th></th>
@@ -908,7 +901,7 @@ function quick_edit(elem, id)
 				<div class="progress_bar" style="width:<?php echo Filters::noXSS($subtask['percent_complete']); ?>%"></div>
 			</div>
 		</td>
-		<td><?php echo tpl_form(Filters::noXSS(createURL('details', $task_details['task_id'], null, ['suborder' => Req::val('suborder'),'subsort' => Req::val('subsort')]))); ?>
+		<td><?php echo tpl_form(Filters::noXSS(createURL('details', $task_details['task_id']))); ?>
 			<input type="hidden" name="subtaskid" value="<?php echo Filters::noXSS($subtask['task_id']); ?>" />
 			<input type="hidden" name="action" value="removesubtask" />
 			<button type="submit" title="<?= eL('remove') ?>" class="fa fa-unlink fa-lg"></button>
